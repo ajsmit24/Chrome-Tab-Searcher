@@ -2,12 +2,25 @@
   <html>
     <head>
       <style>
-
+        .title{
+          
+        }
+        .res{
+          border-bottom:solid 1px black;
+        }
       </style>
     </head>
     <body>
-	  <input type="text" placeholder="Search....">
+	  <input id="search-box"type="text" placeholder="Search....">
+    <p>What parts of a tab should be searched?</p>
+    <input id="check-url"type="checkbox"> URL
+    <input id="check-title"type="checkbox"> Title
+    <p>What type of search should be used?</p>
+    <input id="check-exact"type="checkbox"> Exact match
+    <input id="check-contains"type="checkbox"> Contains
+    <input id="check-case"type="checkbox"> Case matters
       <button style="width:100%;margin-top:5px"id="search">Search</button>
 	  <script src="popup.js"></script>
+    <script src="libs/jquery-3.3.1.min.js"></script>
     </body>
   </html>

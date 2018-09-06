@@ -4,6 +4,11 @@ let searchBtn = document.getElementById('search');
 //getting tabs
 //----------------------------------------------------------------
 var tabsArr=[];
+var matchType={
+	exact:false,
+	contains:true,
+	case:false
+}
 	var getTabs= function(windowID,callback){
 		 chrome.tabs.getAllInWindow(windowID,function(data){
 			 console.log(data);
@@ -21,7 +26,15 @@ var tabsArr=[];
 		for(var i=0;i<data.length;i++){
 			getTabs(data[i].id, function(){
 				if(tabsArr[tabsArr.length-1].windowId==data[data.length-1].id){
-					console.log("fin",tabsArr);				
+					console.log("fin",tabsArr);	
+					var searchType={
+						url:$("#check-url")[0].checked,
+						title:$("#check-title")[0].checked,
+					}
+					matchType.exact=$("#check-exact")[0].checked;
+					matchType.contains=$("#check-contains")[0].checked;
+					matchType.case=$("#check-case")[0].checked;
+					search(tabsArr,searchType,$("#search-box")[0].value);			
 				}
 
 			});
@@ -30,23 +43,39 @@ var tabsArr=[];
   };
   
 //search tabs
-function search(searchType){
+//search types object
+function search(searchArr,searchTypes,searchString){
 	var foundTabs=[];
-	/*if(searchCon1){
-		appendArrays(searchTitle(foundTabs),foundTabs);
+	console.log(searchArr,searchTypes,searchString)
+	if(searchTypes.title){
+		appendArrays(searchTitle(searchArr,searchString),foundTabs);
 	}
-	if(searchCon2){
-		appendArrays(searchTitle(foundTabs),foundTabs);
-	}*/
+	if(searchTypes.url){
+		appendArrays(searchURL(searchArr,searchString),foundTabs);
+	}
+	console.log(foundTabs);
+	displayRes(foundTabs);
 }
 
 
-function searchTitle(arrOfTabs){
-	
+function searchTitle(arrOfTabs,searchString){
+	var matches=[];
+	for(var i=0;i<arrOfTabs.length;i++){
+		if(isMatch(arrOfTabs[i].title,searchString)){
+			matches.push(arrOfTabs[i])
+		}
+	}
+	return matches;
 }
 
-function searchURL(arrOfTabs){
-	
+function searchURL(arrOfTabs,searchString){
+	var matches=[];
+	for(var i=0;i<arrOfTabs.length;i++){
+		if(isMatch(arrOfTabs[i].url,searchString)){
+			matches.push(arrOfTabs[i])
+		}
+	}
+	return matches;
 }
 //helpers
 
@@ -63,6 +92,19 @@ function appendArrays(arr1,arr2){
 	}
 	return finArr;
 }
+
+function isMatch(stringToSearch,searchString){
+	if(!matchType.case){
+		searchString=searchString.toLowerCase();
+		stringToSearch=stringToSearch.toLowerCase();
+	}
+	if(matchType.exact){
+		return stringToSearch===searchString;
+	}
+	if(matchType.contains){
+		return stringToSearch.indexOf(searchString)>-1;
+	}
+}
 //var c=tabsArr.slice();tabsArr.shift();appendArrays(c,tabsArr)
 
 function alreadyFound(tab,arr){
@@ -76,10 +118,15 @@ function alreadyFound(tab,arr){
 
 //display results
 function displayRes(resArr){
-	var divArr=[];
+	var divsStr="<table>";
 	for(var i=0;i<resArr.length;i++){
-		var div="<div>";
+		var title="<div class='title'>"+resArr[i].title+"</div>";
+		var div="<tr><div class='res'>"+title+"</div></tr>";
+		divsStr+=div+"";
 	}
+	divsStr+="</table>";
+	$("#search-box").after(divsStr);
+	$(".res").click()
 }
 
   
