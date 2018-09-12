@@ -1,6 +1,8 @@
 //get button
 let searchBtn = document.getElementById('search');
 
+var highlight1="<span class='highlight'>";
+var highlight2="</span>";
 //getting tabs
 //----------------------------------------------------------------
 var tabsArr=[];
@@ -9,6 +11,11 @@ var matchType={
 	contains:true,
 	case:false
 }
+var searchType={
+	url:true,
+	title:true,
+}
+
 	var getTabs= function(windowID,callback){
 		 chrome.tabs.getAllInWindow(windowID,function(data){
 			 console.log(data);
@@ -27,10 +34,9 @@ var matchType={
 			getTabs(data[i].id, function(){
 				if(tabsArr[tabsArr.length-1].windowId==data[data.length-1].id){
 					console.log("fin",tabsArr);	
-					var searchType={
-						url:$("#check-url")[0].checked,
-						title:$("#check-title")[0].checked,
-					}
+
+					searchType.url=$("#check-url")[0].checked;
+					searchType.title=$("#check-title")[0].checked;
 					matchType.exact=$("#check-exact")[0].checked;
 					matchType.contains=$("#check-contains")[0].checked;
 					matchType.case=$("#check-case")[0].checked;
@@ -57,12 +63,11 @@ function search(searchArr,searchTypes,searchString){
 	displayRes(foundTabs);
 }
 
-
 function searchTitle(arrOfTabs,searchString){
 	var matches=[];
 	for(var i=0;i<arrOfTabs.length;i++){
 		if(isMatch(arrOfTabs[i].title,searchString)){
-			matches.push(arrOfTabs[i])
+			matches.push(arrOfTabs[i]);
 		}
 	}
 	return matches;
@@ -72,13 +77,20 @@ function searchURL(arrOfTabs,searchString){
 	var matches=[];
 	for(var i=0;i<arrOfTabs.length;i++){
 		if(isMatch(arrOfTabs[i].url,searchString)){
-			matches.push(arrOfTabs[i])
+			matches.push(arrOfTabs[i]);
 		}
 	}
 	return matches;
 }
 //helpers
-
+function addHighLights(res,searchString){
+	var index=res.indexOf(searchString);
+	if(index<0){
+		return res;
+	}
+	var mid=res.substring(index,index+searchString.length);
+	return res.substring(0,index)+highlight1+mid+highlight2+res.substring(index+searchString.length);
+}
 /*Takes two arrays and adds the unique elements
  *does not get rid of existing dups in each array
  *arr1 is the array being added to arr2
@@ -117,16 +129,32 @@ function alreadyFound(tab,arr){
 }
 
 //display results
+var gt;
 function displayRes(resArr){
-	var divsStr="<table>";
+	var divsStr="<div id='resDiv'>";
+	var ser=$("#search-box")[0].value;
+	$("#resDiv").remove();
 	for(var i=0;i<resArr.length;i++){
 		var title="<div class='title'>"+resArr[i].title+"</div>";
-		var div="<tr><div class='res'>"+title+"</div></tr>";
+		if(searchType.title){
+			title="<div class='title'>"+addHighLights(resArr[i].title,ser)+"</div>";
+		}
+		var url="<div class='url'>"+resArr[i].url+"</div>";
+		if(searchType.url){
+			url="<div class='url'>"+addHighLights(resArr[i].url,ser)+"</div>";
+		}
+		var div="<div class='res' data-id='"+resArr[i].id+"'>"+title+url+"</div>";
 		divsStr+=div+"";
 	}
-	divsStr+="</table>";
+	divsStr+="</div>";
+	console.log(divsStr)
 	$("#search-box").after(divsStr);
-	$(".res").click()
+	$(".res").click(function(){
+		chrome.tabs.get(parseInt($(this)[0].dataset.id),function(data){
+			gt=data;
+			chrome.tabs.duplicate(gt.id);
+			chrome.tabs.remove(gt.id);
+		});
+	});
 }
 
-  
