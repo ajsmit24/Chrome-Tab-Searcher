@@ -21,24 +21,44 @@
         .highlight{
           background-color: yellow
         }
+        .err{
+          color:red;
+        }
+        .success{
+          color:green;
+        }
+        .fake-rad{
+          position:absolute;
+          background-color: blue;
+          width:15px;
+          height:15px;
+          border-radius:50%;
+          left:5px;
+          top:5px
+        }
       </style>
     </head>
     <body>
     <div id="main">
 	  <input id="search-box"type="text" placeholder="Search....">
     <p>What parts of a tab should be searched?</p>
-    <input checked="true"id="check-url"type="checkbox"> URL
-    <input id="check-title"type="checkbox"> Title
+    <input checked="true"id="check-url"type="checkbox">
+    <label for="check-url">URL</label>
+    <input checked="true"id="check-title"type="checkbox">
+    <label for="check-title">Title</label>
     <p>What type of search should be used?</p>
-  <input id="check-exact" type="radio" name="type" value="Exact match">Exact match <br>
-  <input id="check-contains"type="radio" name="type" value="Contains"> Contains<br>
+    <input id="check-exact" type="radio" name="type" value="Exact match">
+    <label for="check-exact">Exact match</label>
+    <input checked="true" id="check-contains"type="radio" name="type" value="Contains">
+    <label for="check-contains">Contains</label>
     <hr/>
-    <input id="check-case"type="checkbox"> Case matters
+    <input id="check-case"type="checkbox"> 
+    <label for="check-case">Case matters</label>
       <button style="width:100%;margin-top:5px"id="search">Search</button>
     </div>
 	  <script src="popup.js"></script>
     <script src="libs/jquery-3.3.1.min.js"></script>
     <!--<script src="libs/bootstrap.min.js"></script>-->
-    <!--<link href="libs/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">-->
+    <link href="libs/customInputs.css" rel="stylesheet" id="bootstrap-css">
     </body>
   </html>

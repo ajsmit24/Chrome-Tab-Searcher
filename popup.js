@@ -15,6 +15,16 @@ var searchType={
 	url:true,
 	title:true,
 }
+var searchQuerry;
+
+	document.getElementById("search-box").onclick=function(){
+		$("body").keydown(function(event) {
+  			if(event.which == 13){
+				mainInit();
+			  }
+		});
+	}
+		
 
 	var getTabs= function(windowID,callback){
 		 chrome.tabs.getAllInWindow(windowID,function(data){
@@ -25,8 +35,8 @@ var searchType={
 			callback();
 		 });
 	}
-	
-  searchBtn.onclick = function(element) {
+  searchBtn.onclick = mainInit;
+  function mainInit(element) {
 	  console.log("@@@")
 	chrome.windows.getAll(function(data){
 		console.log(data);
@@ -34,13 +44,13 @@ var searchType={
 			getTabs(data[i].id, function(){
 				if(tabsArr[tabsArr.length-1].windowId==data[data.length-1].id){
 					console.log("fin",tabsArr);	
-
 					searchType.url=$("#check-url")[0].checked;
 					searchType.title=$("#check-title")[0].checked;
 					matchType.exact=$("#check-exact")[0].checked;
 					matchType.contains=$("#check-contains")[0].checked;
 					matchType.case=$("#check-case")[0].checked;
-					search(tabsArr,searchType,$("#search-box")[0].value);			
+					searchQuerry=$("#search-box")[0].value;
+					search(tabsArr,searchType,searchQuerry);			
 				}
 
 			});
@@ -134,6 +144,8 @@ function displayRes(resArr){
 	var divsStr="<div id='resDiv'>";
 	var ser=$("#search-box")[0].value;
 	$("#resDiv").remove();
+	$(".err").remove();
+	$(".success").remove();
 	for(var i=0;i<resArr.length;i++){
 		var title="<div class='title'>"+resArr[i].title+"</div>";
 		if(searchType.title){
@@ -147,6 +159,12 @@ function displayRes(resArr){
 		divsStr+=div+"";
 	}
 	divsStr+="</div>";
+	var searchDis=displaySearchQuerry(searchQuerry);
+	if(resArr.length<1){
+		divsStr="<div class='err'>No results found for <i>"+searchDis+"</i></div>"
+	}else{
+		divsStr="<div class='success'>Displaying results for <i>"+searchDis+"</i></div>"+divsStr;
+	}
 	console.log(divsStr)
 	$("#search-box").after(divsStr);
 	$(".res").click(function(){
@@ -158,3 +176,22 @@ function displayRes(resArr){
 	});
 }
 
+function displaySearchQuerry(str){
+	var retVal="";
+	var escapeList=["<",">",'"',"&","'"];
+	var replacers=["&lt;","&gt;","&quot;","&amp;","&apos;"];
+	for(var i=0;i<str.length;i++){
+		var isOnList=false;
+		for(var j=0;j<escapeList.length;j++){
+			if(str.substring(i,i+1)===escapeList[j]){
+				retVal+=replacers[j];
+				break;
+			}else{
+				if(j==escapeList.length-1){
+					retVal+=str.substring(i,i+1);
+				}
+			}
+		}
+	}
+	return retVal;
+}
