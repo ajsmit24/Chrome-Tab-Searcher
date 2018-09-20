@@ -1,7 +1,7 @@
   {
     "name": "Chrome Tab Search-inator",
     "version": "1.0",
-    "description": "Build an Extension!",
+    "description": "Allows user to search for and navigate to a specific tab out of many",
 	"permissions": ["activeTab","tabs","declarativeContent"],
 	"background": {
       "scripts": ["background.js"],
