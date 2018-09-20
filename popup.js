@@ -1,11 +1,11 @@
+//Global vars
 //get button
 let searchBtn = document.getElementById('search');
-
+//some html I need access to later;
 var highlight1="<span class='highlight'>";
 var highlight2="</span>";
-//getting tabs
-//----------------------------------------------------------------
-var tabsArr=[];
+var tabsArr=[];//storage once all tabs have been retrived
+//options based on radio/check~~~
 var matchType={
 	exact:false,
 	contains:true,
@@ -15,8 +15,11 @@ var searchType={
 	url:true,
 	title:true,
 }
-var searchQuerry;
+//~~
+var searchQuerry;//input string
+//---------------------------------------------
 
+//Enables hitting enter to search
 	document.getElementById("search-box").onclick=function(){
 		$("body").keydown(function(event) {
   			if(event.which == 13){
@@ -25,31 +28,34 @@ var searchQuerry;
 		});
 	}
 		
-
+//get all open tabs from all open windows
+//fills tabArr does not return any thing
 	var getTabs= function(windowID,callback){
 		 chrome.tabs.getAllInWindow(windowID,function(data){
-			 console.log(data);
 			for(var i=0;i<data.length;i++){
 				tabsArr.push(data[i]);
 			}
 			callback();
 		 });
 	}
+//bind search to search button
   searchBtn.onclick = mainInit;
+
+//The main search function
   function mainInit(element) {
-	  console.log("@@@")
 	chrome.windows.getAll(function(data){
-		console.log(data);
 		for(var i=0;i<data.length;i++){
+			//cycling through all open windows
 			getTabs(data[i].id, function(){
 				if(tabsArr[tabsArr.length-1].windowId==data[data.length-1].id){
-					console.log("fin",tabsArr);	
+					//settings---
 					searchType.url=$("#check-url")[0].checked;
 					searchType.title=$("#check-title")[0].checked;
 					matchType.exact=$("#check-exact")[0].checked;
 					matchType.contains=$("#check-contains")[0].checked;
 					matchType.case=$("#check-case")[0].checked;
 					searchQuerry=$("#search-box")[0].value;
+					//---
 					search(tabsArr,searchType,searchQuerry);			
 				}
 
@@ -62,14 +68,14 @@ var searchQuerry;
 //search types object
 function search(searchArr,searchTypes,searchString){
 	var foundTabs=[];
-	console.log(searchArr,searchTypes,searchString)
 	if(searchTypes.title){
+		//if settings says to search title
 		appendArrays(searchTitle(searchArr,searchString),foundTabs);
 	}
 	if(searchTypes.url){
+		//if settings says to search url
 		appendArrays(searchURL(searchArr,searchString),foundTabs);
 	}
-	console.log(foundTabs);
 	displayRes(foundTabs);
 }
 
@@ -94,7 +100,11 @@ function searchURL(arrOfTabs,searchString){
 }
 //helpers
 function addHighLights(res,searchString){
-	var index=res.indexOf(searchString);
+	var index=res.toLowerCase().indexOf(searchString.toLowerCase());
+	if(matchType.case){
+		index=res.indexOf(searchString);
+	}
+	
 	if(index<0){
 		return res;
 	}
@@ -127,7 +137,6 @@ function isMatch(stringToSearch,searchString){
 		return stringToSearch.indexOf(searchString)>-1;
 	}
 }
-//var c=tabsArr.slice();tabsArr.shift();appendArrays(c,tabsArr)
 
 function alreadyFound(tab,arr){
 	for(var i=0;i<arr.length;i++){
