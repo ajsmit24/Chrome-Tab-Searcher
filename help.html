@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+      <style>
+        #backLink{
+          position:absolute;
+          left:1px;
+          top:1px;
+        }
+        #main{
+          margin-top:20px;
+        }
+        #back{
+          background-color:lightgrey;
+          color:grey;
+          border-radius: 100%;
+          height:15px;
+          width:15px
+        }
+        #back div{
+          position:absolute;
+          left:2px;
+          top:-1px;
+        }
+      </style>
+    </head>
+    <body style="text-align:center">
+    <a href="popup.html" id="backLink"><div title="back"id="back"><div>&lt;</div></div></a>
+    <div id="main">
+    <h1>Welcome to the help page!</h1>
+    <h3>The below image is designed to help you understand the extension&apos;s function</h3>
+	  <img src="images/help.png">
+    </div>
+	  <script src="popup.js"></script>
+    <script src="libs/jquery-3.3.1.min.js"></script>
+    <!--<script src="libs/bootstrap.min.js"></script>-->
+    <link href="libs/customInputs.css" rel="stylesheet" id="bootstrap-css">
+    </body>
+  </html>

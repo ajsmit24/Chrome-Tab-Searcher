@@ -165,7 +165,6 @@ function displayRes(resArr){
 	}else{
 		divsStr="<div class='success'>Displaying results for <i>"+searchDis+"</i></div>"+divsStr;
 	}
-	console.log(divsStr)
 	$("#search-box").after(divsStr);
 	$(".res").click(function(){
 		chrome.tabs.get(parseInt($(this)[0].dataset.id),function(data){
