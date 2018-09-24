@@ -20,13 +20,15 @@ var searchQuerry;//input string
 //---------------------------------------------
 
 //Enables hitting enter to search
-	document.getElementById("search-box").onclick=function(){
+var searchBox=document.getElementById("search-box")
+	if(searchBox){
+		searchBox.onclick=function(){
 		$("body").keydown(function(event) {
   			if(event.which == 13){
 				mainInit();
 			  }
 		});
-	}
+	}}
 		
 //get all open tabs from all open windows
 //fills tabArr does not return any thing
@@ -39,7 +41,9 @@ var searchQuerry;//input string
 		 });
 	}
 //bind search to search button
+if(searchBtn){
   searchBtn.onclick = mainInit;
+}
 
 //The main search function
   function mainInit(element) {
