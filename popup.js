@@ -115,6 +115,17 @@ function addHighLights(res,searchString){
 	var mid=res.substring(index,index+searchString.length);
 	return res.substring(0,index)+highlight1+mid+highlight2+res.substring(index+searchString.length);
 }
+function shorten(res){
+	if(res.length>75){
+	if(Math.abs((res.indexOf(highlight2)+highlight2.length)-res.length)>51){
+		return res.substring(0,res.indexOf(highlight2)+highlight2.length+5)+"...";
+	}else{
+		return res;
+	}
+	}else{
+		return res;
+	}
+}
 /*Takes two arrays and adds the unique elements
  *does not get rid of existing dups in each array
  *arr1 is the array being added to arr2
@@ -159,6 +170,7 @@ function displayRes(resArr){
 	$("#resDiv").remove();
 	$(".err").remove();
 	$(".success").remove();
+	var scrollx=false;
 	for(var i=0;i<resArr.length;i++){
 		var title="<div class='title'>"+resArr[i].title+"</div>";
 		if(searchType.title){
@@ -166,9 +178,9 @@ function displayRes(resArr){
 		}
 		var url="<div class='url'>"+resArr[i].url+"</div>";
 		if(searchType.url){
-			url="<div class='url'>"+addHighLights(resArr[i].url,ser)+"</div>";
+			url="<div class='url'>"+shorten(addHighLights(resArr[i].url,ser))+"</div>";
 		}
-		var div="<div class='res' data-id='"+resArr[i].id+"'>"+title+url+"</div>";
+		var div="<div class='res clickable' data-id='"+resArr[i].id+"'>"+title+url+"</div>";
 		divsStr+=div+"";
 	}
 	divsStr+="</div>";
